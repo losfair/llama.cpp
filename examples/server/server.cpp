@@ -2362,13 +2362,11 @@ std::string format_chatml(std::vector<json> messages)
     std::ostringstream chatml_msgs;
 
     for (auto it = messages.begin(); it != messages.end(); ++it) {
-        chatml_msgs << "<|im_start|>"
-                    << json_value(*it, "role",    std::string("user")) << '\n';
-        chatml_msgs << json_value(*it, "content", std::string(""))
-                    << "<|im_end|>\n";
+        bool is_user = json_value(*it, "role", std::string("user")) == "user";
+        if (is_user) { chatml_msgs << "[INST]"; }
+        chatml_msgs << json_value(*it, "content", std::string(""));
+        if (is_user) { chatml_msgs << "[/INST]"; }
     }
-
-    chatml_msgs << "<|im_start|>assistant" << '\n';
 
     return chatml_msgs.str();
 }
